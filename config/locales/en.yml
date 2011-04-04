@@ -35,6 +35,5 @@ en:
   label_header_blank: "Some headers are blank. Please confirm your file."
   label_file_undefined: "No file is specified."
 
-
-button_submit: "Submit"
-button_save_rules_and_submit: "Save match rules and submit"
+  button_submit: "Submit"
+  button_save_rules_and_submit: "Save match rules and submit"
