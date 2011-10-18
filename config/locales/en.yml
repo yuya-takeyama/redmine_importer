@@ -8,7 +8,7 @@ en:
   label_upload_wrapper: "Field wrap char:"
   
   label_load_rules: "Load saved rules"
-  label_toplines: "Refer to top lines of %s："
+  label_toplines: "Refer to top lines of %{line}："
   label_match_columns: "Matching Columns"
   label_match_select: "Select match field"
   label_import_rule: "Import rules"
@@ -21,17 +21,17 @@ en:
   label_rule_name: "Input rule name"
 
   label_import_result: "Import Result"
-  label_result_notice: "%d issues processed. %d issues success imported."
+  label_result_notice: "%{total_count} issues processed. %{imported_count} issues success imported."
   label_result_projects: "Affected projects:"
-  label_result_issues: "%d issues"
-  label_result_failed: "Failed %d rows:"
+  label_result_issues: "%{count} issues"
+  label_result_failed: "Failed %{fail_count} rows:"
 
   option_ignore: "Ignore"
 
   button_upload: "Upload File"
   field_id: "Issue ID"
-  label_result_notice_f: "%d tickets read: "
-  label_result_notice_b: "%d tickets imported"
+  label_result_notice_f: "%{total_count} tickets read: "
+  label_result_notice_b: "%{imported_count} tickets imported"
   label_header_blank: "Some headers are blank. Please confirm your file."
   label_file_undefined: "No file is specified."
 

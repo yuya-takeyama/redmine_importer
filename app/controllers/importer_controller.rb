@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-require 'fastercsv'
+begin
+  require 'fastercsv' unless defined? FasterCSV
+rescue LoadError
+end
+
 require 'tempfile'
 require 'nkf'
 
@@ -14,6 +18,11 @@ class ImporterController < ApplicationController
     :start_date, :due_date, :done_ratio, :estimated_hours]
   
   def index
+    unless defined? FasterCSV
+      flash[:error] = '<h1>FasterCSV load error</h1>Please run "gem install fastercsv"'
+      redirect_to :action => "index", :project_id => params[:project_id]
+      return
+    end
   end
 
   def match
@@ -22,6 +31,7 @@ class ImporterController < ApplicationController
     splitter = params[:splitter]
     wrapper = params[:wrapper]
     encoding = params[:encoding]
+    date_format = params[:date_format]
 
     if file == nil 
       flash[:error] = l(:label_file_undefined);
@@ -85,7 +95,11 @@ class ImporterController < ApplicationController
       @attrs.push([cfield.name, cfield.name])
     end
     @attrs.sort!
-     
+
+  rescue 
+    flash[:error] = "Error happened when parsing csv. Please comfirm file encoding.";
+    redirect_to :action => "index", :project_id => params[:project_id]
+    return
   end
 
   def result
@@ -134,7 +148,9 @@ class ImporterController < ApplicationController
       status = IssueStatus.find_by_name(row[attrs_map["status"]])
       author = User.find_by_login(row[attrs_map["author"]])
       priority = Enumeration.find_by_name(row[attrs_map["priority"]])
-      category = IssueCategory.find_by_name(row[attrs_map["category"]])
+
+      category_name = row[attrs_map["category"]]
+      category = IssueCategory.find_by_project_id_and_name(project.id, category_name)
       assigned_to = User.find_by_login(row[attrs_map["assigned_to"]])
       fixed_version = Version.find_by_name(row[attrs_map["fixed_version"]])
   
@@ -231,13 +247,26 @@ class ImporterController < ApplicationController
       # custom fields
       issue.custom_field_values = issue.available_custom_fields.inject({}) do |h, c|
         if value = row[attrs_map[c.name]]
+          if c.field_format == 'date'
+            org_value = value
+            value = Date.parse(value).strftime("%Y-%m-%d") rescue value = org_value
+          end
           h[c.id] = value
         end
         h
       end
 
-      if (!issue.save)
-        # 记录错误
+      begin
+        issue.save!
+        success = true
+      rescue => e
+        success = false
+        unless @failed_first_error
+          @failed_first_error = e.message
+        end
+      end
+
+      if (!success)
         @failed_count += 1
         @failed_issues[@handle_count + 1] = row
       end

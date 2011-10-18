@@ -3,15 +3,16 @@
 <% end %>
 
 <h2><%= l(:label_import_result) %></h2>
-<p><%= l(:label_result_notice_f, @handle_count) %><%= l(:label_result_notice_b, @handle_count - @failed_count) %></p>
+<p><%= l(:label_result_notice_f, :total_count => @handle_count) %><%= l(:label_result_notice_b, :imported_count => (@handle_count - @failed_count)) %></p>
+
 <p><%= l(:label_result_projects) %><br/>
 <% @affect_projects_issues.each do |project, count|%>
-<label class="tabular2"><%= project %>:</label><label class="tabular2"><%= l(:label_result_issues, count) %></label><br/>
+<label class="tabular2"><%= project %>:</label><label class="tabular2"><%= l(:label_result_issues, :count => count) %></label><br/>
 <% end %></p>
 <hr/>
 
 <% if @failed_count > 0 %>
-<%= l(:label_result_failed, @failed_count) %>
+<%= l(:label_result_failed, :faild_count => @failed_count) %>
 <table class="list">
     <thead><tr>
     	<th>#</th>

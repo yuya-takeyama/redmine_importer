@@ -4,4 +4,5 @@ This plugin is based on https://github.com/rchady/redmine_importer/ and
 https://github.com/juno/redmine_importer. 
 Customized for Japanese environment.
 
-
+Note: 
+ Assigned user and creator name should be described via login id.
