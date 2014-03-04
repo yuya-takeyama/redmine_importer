@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-begin
-  require 'fastercsv' unless defined? FasterCSV
-rescue LoadError
-end
-
 require 'tempfile'
 require 'nkf'
 
@@ -18,11 +13,6 @@ class ImporterController < ApplicationController
     :start_date, :due_date, :done_ratio, :estimated_hours]
   
   def index
-    unless defined? FasterCSV
-      flash[:error] = '<h1>FasterCSV load error</h1>Please run "gem install fastercsv"'
-      redirect_to :action => "index", :project_id => params[:project_id]
-      return
-    end
   end
 
   def match
@@ -65,7 +55,7 @@ class ImporterController < ApplicationController
     i = 0
     @samples = []
     
-    FasterCSV.foreach(tmpfile.path, {:headers=>true, :encoding=>"UTF-8", :quote_char=>wrapper, :col_sep=>splitter}) do |row|
+    CSV.foreach(tmpfile.path, {:headers=>true, :encoding=>"UTF-8", :quote_char=>wrapper, :col_sep=>splitter}) do |row|
       @samples[i] = row
       
       i += 1
@@ -141,7 +131,7 @@ class ImporterController < ApplicationController
     # attrs_map is fields_map's invert
     attrs_map = fields_map.invert
       
-    FasterCSV.foreach(tmpfile.path, {:headers=>true, :encoding=>'UTF-8', :quote_char=>wrapper, :col_sep=>splitter}) do |row|
+    CSV.foreach(tmpfile.path, {:headers=>true, :encoding=>'UTF-8', :quote_char=>wrapper, :col_sep=>splitter}) do |row|
 
       project = Project.find_by_name(row[attrs_map["project"]])
       tracker = Tracker.find_by_name(row[attrs_map["tracker"]])
